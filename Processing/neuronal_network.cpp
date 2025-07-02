@@ -1,4 +1,4 @@
-#include "neuronal_network.h"
+#include "../neuronal_network.h"
 
 neuronal_network::neuronal_network(std::vector<int> Network_Dimensions) {
 	network_dimensions = Network_Dimensions;

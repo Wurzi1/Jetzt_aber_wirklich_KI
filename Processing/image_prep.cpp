@@ -1,4 +1,4 @@
-#include "image_prep.h"
+#include "../image_prep.h"
 
 image_prep::image_prep(std::string Base_Path) {
     base_path = Base_Path;

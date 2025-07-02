@@ -3,8 +3,8 @@
 #include <armadillo>
 #include <vector>
 #include <string>
-#include "../neuronal_network.h"
-#include "../image_prep.h"
+#include "../Processing/neuronal_network.h"
+#include "../Processing/image_prep.h"
 
 
 int main()
