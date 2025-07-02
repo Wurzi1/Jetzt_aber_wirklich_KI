@@ -1,6 +1,9 @@
 {
-  "dependencies": [
-    "opencv",
-    "armadillo"
-  ]
+  "dependencies" : [ {
+    "name" : "opencv2",
+    "version>=" : "2.4.13.7#24"
+  }, {
+    "name" : "armadillo",
+    "version>=" : "14.4.1"
+  } ]
 }

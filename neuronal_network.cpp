@@ -3,9 +3,13 @@
 neuronal_network::neuronal_network(std::vector<int> Network_Dimensions) {
 	network_dimensions = Network_Dimensions;
 	network_layers = network_dimensions.size();
+
 	for (int i = 1; i < network_layers; i++) {
+
 		weights.emplace_back(arma::fmat(network_dimensions[i], network_dimensions[i-1], arma::fill::randu)); // or randn for normal distribution
+
 		biases.emplace_back(arma::fcolvec(network_dimensions[i], arma::fill::randu)); // or randn for normal distribution
+
 		final_nodes.emplace_back(arma::fcolvec(network_dimensions[i - 1], arma::fill::zeros));
 	}
 	final_nodes.emplace_back(arma::fcolvec(network_dimensions[network_layers-1], arma::fill::zeros));
