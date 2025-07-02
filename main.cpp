@@ -6,7 +6,7 @@
 #include "neuronal_network.h"
 #include "image_prep.h"
 
-
+//TODO: fix feed forward(sigmoid) returning too big otput values y_hat should be between 0 and 1
 int main()
 {
     //std::vector<int> dim = {3,4,2};
@@ -49,9 +49,21 @@ int main()
     std::string basePath = "C:/Users/Jakob/Downloads/archive/Dataset/Train/";
     image_prep prp(basePath);
 
-    std::vector<int> dim = {38804, 50, 1};
+    std::vector<int> dim = {38804, 1000, 50, 1};
     neuronal_network ntw(dim);
-    ntw.feed_forward(prp.create_input(5, 0));
+    int epochs = 5;
+    float learning_rate = 0.1;
+
+    for (int i = 0; i < epochs; i++) {
+
+        ntw.feed_forward(prp.create_input(4, 0));
+
+        float cost = ntw.cost(prp.create_y(prp.current_image_paths), ntw.nodes.back());
+        std::cout << "Cost" << i << ": " << cost << "\n";
+
+        ntw.backprop(prp.create_y(prp.current_image_paths));
+
+    }
 
     return 0;
     

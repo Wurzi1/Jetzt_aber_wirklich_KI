@@ -3,6 +3,7 @@
 #include <math.h>
 #include <vector>
 #include <armadillo>
+#include <time.h>
 
 
 class neuronal_network
@@ -19,5 +20,7 @@ public:
 
 	void sigmoid(arma::fmat &matrix);
 	void feed_forward(arma::fmat input_nodes);
+	float cost(arma::fmat y, arma::fmat &y_hat);
+	void backprop(arma::fmat y);
 };
 

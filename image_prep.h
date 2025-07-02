@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <time.h>
 
 
 class image_prep
@@ -14,8 +15,10 @@ public:
 	std::string base_path;
 	std::vector<std::string> image_paths;
 	std::vector<std::string> unused_image_paths;
+	std::vector<std::string> current_image_paths;
 
 	image_prep(std::string Base_Path);
 	arma::fmat create_input(int amount, int mode);
+	arma::fmat create_y(std::vector<std::string> paths);
 };
 

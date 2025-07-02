@@ -20,15 +20,27 @@ arma::fmat image_prep::create_input(int amount, int mode) {
     cv::Mat test_img = cv::imread(image_paths[0], cv::IMREAD_GRAYSCALE);
     arma::fmat input_node_matrix(test_img.rows * test_img.cols, amount);
 
-    //std::vector<std::string> input_paths;
-    //input_paths.reserve(image_paths[1].size() * amount);
+    //create vector for y
+    current_image_paths.reserve(image_paths[1].size() * amount);
     
+    srand(time(NULL));
+
     for (int i = 0; i < amount; i++) {
         //generate random index to access one unique image path
-        int rand_index = std::rand() % amount_unused_images;
-        std::string rand_path = unused_image_paths[rand_index];
-        unused_image_paths.erase(unused_image_paths.begin() + rand_index);
+        int rand_index = rand() % amount_unused_images; // RAND_MAX too low!
+        std::string rand_path;
+        if (rand_index % 2 == 0) {
+            rand_path = unused_image_paths[rand_index];
+            unused_image_paths.erase(unused_image_paths.begin() + rand_index);
+        }
+        else {
+            rand_path = unused_image_paths[amount_unused_images-rand_index];
+            unused_image_paths.erase(unused_image_paths.begin() + (amount_unused_images - rand_index));
+        }
         amount_unused_images--;
+
+        //fill vector for y
+        current_image_paths.emplace_back(rand_path);
 
         //load image with opencv
         cv::Mat cv_img = cv::imread(rand_path, cv::IMREAD_GRAYSCALE );
@@ -43,4 +55,20 @@ arma::fmat image_prep::create_input(int amount, int mode) {
     }
 
     return input_node_matrix;
+}
+
+arma::fmat image_prep::create_y(std::vector<std::string> paths) {
+    arma::fmat y(1, paths.size());
+
+    for (int i = 0; i < paths.size(); i++) {
+        if (paths[i].find("Female") != std::string::npos) {
+            y(0, i) = 1.0f;
+        }
+        else
+        {
+            y(0, i) = 0.0f;
+        }
+    }
+
+    return y;
 }
