@@ -45,12 +45,16 @@ arma::fmat image_prep::create_input(int amount, int mode) {
         //load image with opencv
         cv::Mat cv_img = cv::imread(rand_path, cv::IMREAD_GRAYSCALE );
 
+
         //copy opencv image into armadillo column
         arma::Col<uint8_t> img_vec(cv_img.rows * cv_img.cols);
         std::memcpy(img_vec.memptr(), cv_img.data, cv_img.rows * cv_img.cols * sizeof(uint8_t));
+        //std::cout << img_vec(arma::span(0,20));
 
         //covert armadillo column into the right type and add to input matrix
         arma::fcolvec img_fvec = arma::conv_to<arma::fcolvec>::from(img_vec);
+        img_fvec /= 255.0f;
+        //std::cout << img_fvec(arma::span(0, 20));
         input_node_matrix.col(i) = img_fvec;
     }
 

@@ -19,8 +19,9 @@ public:
 	neuronal_network(std::vector<int> Network_Dimensions);
 
 	void sigmoid(arma::fmat &matrix);
-	void feed_forward(arma::fmat input_nodes);
-	float cost(arma::fmat y, arma::fmat &y_hat);
-	void backprop(arma::fmat y);
+	void prep_feed_forward(arma::fmat& input_nodes);
+	void feed_forward();
+	float cost(arma::fmat& y, arma::fmat& y_hat);
+	void backprop(arma::fmat& y);
 };
 

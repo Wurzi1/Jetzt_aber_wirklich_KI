@@ -5,19 +5,25 @@ neuronal_network::neuronal_network(std::vector<int> Network_Dimensions) {
 	network_dimensions = Network_Dimensions;
 	network_layers = network_dimensions.size();
 	for (int i = 1; i < network_layers; i++) {
-		weights.emplace_back(arma::fmat(network_dimensions[i], network_dimensions[i-1], arma::fill::randu)); // or randn for normal distribution
-		biases.emplace_back(arma::fcolvec(network_dimensions[i], arma::fill::randu)); // or randn for normal distribution
+		//weights.emplace_back(arma::fmat(network_dimensions[i], network_dimensions[i-1], arma::fill::randu)); // or randn for normal distribution
+		weights.emplace_back(arma::randu<arma::fmat>(network_dimensions[i], network_dimensions[i - 1], arma::distr_param(-1,1))); // or randn for normal distribution
+		//biases.emplace_back(arma::fcolvec(network_dimensions[i], arma::fill::randu)); // or randn for normal distribution
+		biases.emplace_back(arma::randu<arma::fcolvec>(network_dimensions[i], arma::distr_param(-1, 1))); // or randn for normal distribution
 		final_nodes.emplace_back(arma::fcolvec(network_dimensions[i - 1], arma::fill::zeros));
 	}
 	final_nodes.emplace_back(arma::fcolvec(network_dimensions[network_layers-1], arma::fill::zeros));
 }
 
+//FIX THIS
 void neuronal_network::sigmoid(arma::fmat &matrix) {
-	arma::subview_col col = matrix.col(0);
-	col = 1 / (1 + arma::exp(-1 * col));
+	//arma::subview_col col = matrix.col(0);
+	//col = 1 / (1 + arma::exp(-1 * col));
+	//std::cout << matrix.col(0) << "\n" << "\n" << "\n" << "\n" << "\n" << "\n";
+	matrix = 1 / (1 + arma::exp(-1 * matrix));
+	//std::cout << matrix.col(0) << "\n";
 }
 
-void neuronal_network::feed_forward(arma::fmat input_nodes) {
+void neuronal_network::prep_feed_forward(arma::fmat& input_nodes) {
 	//get amount of input samples
 	int input_amount = input_nodes.n_cols;
 
@@ -27,30 +33,31 @@ void neuronal_network::feed_forward(arma::fmat input_nodes) {
 	for (int i = 1; i < network_layers; i++) {
 		nodes.emplace_back(arma::fmat(network_dimensions[i], input_amount, arma::fill::zeros));
 	}
+}
 
+void neuronal_network::feed_forward() {
+	//std::cout << "\n" << "\n" << biases[1].col(0) << "\n";
+	//std::cout << biases[1].col(0);
 	//matrix feed forward
 	for (int i = 0; i < network_layers - 1; i++) {
 		nodes[i + 1] = weights[i] * nodes[i];
 		nodes[i + 1].each_col() += biases[i];
 		sigmoid(nodes[i+1]);
+		//std::cout << "\n" << "\n" << nodes[1].col(1) << "\n";
 
 		//std::cout << nodes[network_layers-1] << "\n";
 	}
 }
 
-float neuronal_network::cost(arma::fmat y, arma::fmat &y_hat) {
+float neuronal_network::cost(arma::fmat& y, arma::fmat& y_hat) {
 	//y: n^L x m; y_hat: n^L x m
-	std::cout << y << "\n";
-	std::cout << y_hat << "\n";
 	//loss function applied on every matrix element
-	arma::fmat losses0 = - (y % arma::log(y_hat)); 
-	arma::fmat losses1 = - ((1 - y) % arma::log(1 - y_hat)); 
+
 	arma::fmat losses = - ((y % arma::log(y_hat)) + (1 - y) % arma::log(1 - y_hat)); 
-	arma::fmat losses3 = - losses0 + losses1; 
-	std::cout << losses0 << "\n";
-	std::cout << losses1 << "\n";
-	std::cout << losses << "\n";
-	std::cout << losses3 << "\n";
+
+	//std::cout << y << "\n";
+	//std::cout << y_hat << "\n" << "\n";
+	//std::cout << losses << "\n";
 
 	//number of results
 	float m = y_hat.n_rows * y_hat.n_cols;
@@ -63,7 +70,7 @@ float neuronal_network::cost(arma::fmat y, arma::fmat &y_hat) {
 	return cost;
 }
 
-void neuronal_network::backprop(arma::fmat y) {
+void neuronal_network::backprop(arma::fmat& y) {
 
 	float m = nodes[network_layers - 1].n_cols;
 
@@ -107,7 +114,7 @@ void neuronal_network::backprop(arma::fmat y) {
 
 
 	for (int i = 0; i < network_layers - 1; i++) {
-		weights[network_layers - 1 - i] -= (0.1f * dC_dWs[i]);
-		biases[network_layers - 1 - i] -= (0.1f * dC_dBs[i]);
+		weights[network_layers - 2 - i] -= (0.1f * dC_dWs[i]);
+		biases[network_layers - 2 - i] -= (0.1f * dC_dBs[i]);
 	}
 }
